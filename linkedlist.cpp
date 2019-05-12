@@ -41,6 +41,23 @@ public:
 		//cout << current->value << endl;
 	}
 
+
+	ListNode* addNodeInNum(int value, ListNode* head, int num){
+		ListNode* current = head;
+		ListNode* temp = nullptr;
+		ListNode* NewListNode = new ListNode(value);
+		if(num == 0){
+			NewListNode->next = head;
+			head = NewListNode;
+		} else{
+			current = findNumNode(current, num-1);
+			temp = current->next;
+			current->next = NewListNode;
+			NewListNode->next = temp;
+		}
+		return head;
+	}
+
 	// https://thispointer.com/create-a-singly-linked-list-from-an-array/?fbclid=IwAR0yYkYuIVgHtZYY1hVZIfIluHmfiBZlBLrvaPFOOGSjFXwla9UvffKITbk
 	// function: 靠lastNodePtr->next = nodePtr & lastNodePtr = nodePtr在連結，nodePtr = nodePtr->next在traversal
 	ListNode* vecToLinkedList(vector<int> input){
@@ -77,9 +94,10 @@ public:
 
 	void printLinkedList(ListNode *head){
 		while(head!=nullptr){
-			cout << head->value << endl;
+			cout << head->value << " ";
 			head = head->next;
 		}
+		cout << endl;
 	}
 	// Time:  O(n)
 	// Space: O(1)
@@ -121,6 +139,8 @@ int main(){
 	LinkedList L;
 	ListNode* HeadLinkedList = L.vecToLinkedList(TestVec);
 	L.addNode(13, HeadLinkedList);
+	L.printLinkedList(HeadLinkedList);
+	HeadLinkedList = L.addNodeInNum(20, HeadLinkedList, 0);
 	L.printLinkedList(HeadLinkedList);
 	cout << "hasCycle(before makeCircle): " << L.hasCycle(HeadLinkedList) << endl;
 	if(L.hasCycle(HeadLinkedList)){
