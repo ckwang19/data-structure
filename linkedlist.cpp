@@ -22,6 +22,7 @@ public:
 		return current;
 	}
 
+	// function: get the Xth node of linkedlist
 	ListNode* findNumNode(ListNode* head, int num){
 		ListNode* current = head;
 		for(int i = 0; i < num; i++){
@@ -62,6 +63,9 @@ public:
 	    return rootNodePtr;
 	}
 
+	// function: make circle linkedlist with assigned number
+	// Input:
+	//		StartNum: can assigned the first circle node
 	void makeCircleLinkedList(ListNode *head, int StartNum){
 		ListNode* current = head;
 		ListNode* current2 = head;
