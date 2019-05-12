@@ -132,6 +132,46 @@ public:
         }
         return false;  // No cycle.
     }
+
+    // if we want to re-direction Nth "->"
+    // step0: setting pre、cur、pas
+    // step1: cancel pre->next
+    // repeat
+    // step2: re-direction cur->next
+    // step3: "pre" move next
+    // step4: "cur" move next
+    // step5: "pas" move next
+    // ......
+    // until pas =nullptr;
+
+    // 0: 1(pre) -> 50(cur) 	-> 30(pas)		-> 100
+    // 1: 1(pre)    50(cur) 	-> 30(pas) 		-> 100
+    // repeat
+    // 2: 1(pre) <- 50(cur) 	   30(pas) 		-> 100
+    // 3: 1	   	 <- 50(cur、pre)   30(pas) 		-> 100
+    // 4: 1	  	 <- 50(pre)  	   30(pas、cur) -> 100
+    // 5: 1	  	 <- 50(pre)  	   30(cur) 		-> 100(pas)
+    // repeat
+    // 6: 1		 <- 50(pre)		<- 30(cur)		   100(pas)
+    // 7: 1		 <- 50			<- 30(cur、pre)	   100(pas)
+    // 8: 1		 <- 50			<- 30(pre)		   100(cur、pas)	
+    // 9: 1		 <- 50			<- 30(pre)		   100(cur)		(pas)
+    // pas = nullptr, re-direction cur->next = pre
+
+    ListNode* reverse(ListNode *head){
+    	ListNode *current = head->next;
+    	ListNode *previous = head;
+    	ListNode *past = head->next->next;
+    	previous->next = nullptr;
+    	while (past != nullptr) {
+    		current->next = previous;
+    		previous = current;
+    		current = past;
+    		past = past->next;
+    	}
+    	current->next = previous;
+    	return current;
+    }
 };
 
 int main(){
@@ -139,8 +179,13 @@ int main(){
 	LinkedList L;
 	ListNode* HeadLinkedList = L.vecToLinkedList(TestVec);
 	L.addNode(13, HeadLinkedList);
+	cout << "original: ";
 	L.printLinkedList(HeadLinkedList);
 	HeadLinkedList = L.addNodeInNum(20, HeadLinkedList, 0);
+	cout << "insert node: ";
+	L.printLinkedList(HeadLinkedList);
+	HeadLinkedList = L.reverse(HeadLinkedList);
+	cout << "reverse: ";
 	L.printLinkedList(HeadLinkedList);
 	cout << "hasCycle(before makeCircle): " << L.hasCycle(HeadLinkedList) << endl;
 	if(L.hasCycle(HeadLinkedList)){
