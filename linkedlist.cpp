@@ -172,21 +172,94 @@ public:
     	current->next = previous;
     	return current;
     }
+
+    // first loop
+    // 1 -> 2 -> 3 -> 4 -> 5
+    // c
+    // 1 -> 2 -> 3 -> 4 -> 5
+    // c    pas
+    // 1    2 -> 3 -> 4 -> 5
+    // c    pas
+    // 1    2 -> 3 -> 4 -> 5
+    // c,pr pas
+    // 1    2 -> 3 -> 4 -> 5
+    // pr   pas,c
+    // 
+    // 1    2 -> 3 -> 4 -> 5
+    // pr	c    pas
+    // 1 <- 2    3 -> 4 -> 5
+    // pr 	c 	 pas
+    // 1 <- 2    3 -> 4 -> 5
+    //		c,prepas
+    // 1 <- 2    3 -> 4 -> 5
+    //		pre  pas,c
+    // ...
+    // ...
+    // ...
+    // secound loop
+    // 3 -> 4 -> 5
+    // ...
+    // ...
+    // 3 <- 4    5
+    //      pre  pas,c
+    // 
+    // ...
+    // ...
+    // third loop
+    // 5	 n/a
+    // pre,c pas
+    // 
+    // return 5, and the head of second loop(3) will point to 5
+    // return 4
+    // and the head of first loop(1) will point to 4
+    // 2 -> 1 -> 4 -> 3 -> 5
+
+    // step1: only set head
+    // step2: reverse
+    // step3: recur, "xth head" will point to the "xth+1 pre",
+    ListNode* reverseKNode(ListNode *head, int k){
+    	// only set head
+    	ListNode* current = head;
+    	ListNode* past = nullptr;
+    	ListNode* pre = nullptr;
+    	int count = 0;
+
+    	// update past(current->next)
+    	// current re-direction
+    	// update pre
+    	// update currnet
+    	while(current != nullptr && count < k){ // re-direction one group in once recur(count < k), if the num of element < k(current != nullptr)
+    		past = current->next;
+    		current->next = pre;
+    		pre = current;
+    		current = past;
+    		count++;
+    	}
+    	// xth: times of recur
+    	// "xth head" will point to the "xth+1 pre"
+    	// (past != nullptr) means: it's not the last group
+    	if (past != nullptr) head->next = reverseKNode(past, k);
+    	return pre;
+    }
 };
 
 int main(){
-	vector<int> TestVec{1,3,5,2,7,8,9,6};
+	vector<int> TestVec{1,2,3,4,5};
 	LinkedList L;
 	ListNode* HeadLinkedList = L.vecToLinkedList(TestVec);
-	L.addNode(13, HeadLinkedList);
-	cout << "original: ";
+	//L.addNode(13, HeadLinkedList);
+	//cout << "original: ";
+	//L.printLinkedList(HeadLinkedList);
+	//HeadLinkedList = L.addNodeInNum(20, HeadLinkedList, 0);
+	//cout << "insert node: ";
+	//L.printLinkedList(HeadLinkedList);
+	//HeadLinkedList = L.reverse(HeadLinkedList);
+	//cout << "reverse: ";
+	//L.printLinkedList(HeadLinkedList);
+
+	HeadLinkedList = L.reverseKNode(HeadLinkedList, 3);
 	L.printLinkedList(HeadLinkedList);
-	HeadLinkedList = L.addNodeInNum(20, HeadLinkedList, 0);
-	cout << "insert node: ";
-	L.printLinkedList(HeadLinkedList);
-	HeadLinkedList = L.reverse(HeadLinkedList);
-	cout << "reverse: ";
-	L.printLinkedList(HeadLinkedList);
+
 	cout << "hasCycle(before makeCircle): " << L.hasCycle(HeadLinkedList) << endl;
 	if(L.hasCycle(HeadLinkedList)){
 		cout << "detectCycle: " << L.detectCycle(HeadLinkedList)->value << endl;
