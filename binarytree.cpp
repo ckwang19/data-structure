@@ -16,9 +16,12 @@ public:
 class BinaryTree{
 public:
     TreeNode *root;         // 以root作為存取整棵樹的起點
-    BinaryTree(TreeNode *node):root(node){};
+    int numCount;
+    int maxDepth;
+    BinaryTree(TreeNode *node):root(node),numCount(0),maxDepth(0){};
     void Preorder(TreeNode *current);
     void Inorder(TreeNode *current);
+    void Inorder(TreeNode *current, int depth);
     void Postorder(TreeNode *current);
     void Levelorder();
     void AddNode(TreeNode *current,std::vector<int> v);
@@ -72,6 +75,18 @@ void BinaryTree::Inorder(TreeNode *current){    //B A C 先左到底再回來，
         Inorder(current->rightchild);       // R
     }
 }
+
+void BinaryTree::Inorder(TreeNode *current, int depth){    //B A C 先左到底再回來，最後才是右
+    if (current) {                          // if current != NULL
+        this->numCount++;
+        depth++;
+        Inorder(current->leftchild, depth);        // L
+        Inorder(current->rightchild, depth);       // R
+    }else {
+        if(depth > this->maxDepth) this->maxDepth = depth;
+    }
+}
+
 void BinaryTree::Postorder(TreeNode *current){  //B C A 先左再右，最後才回來
     if (current) {                         // if current != NULL
         Postorder(current->leftchild);     // L
@@ -240,9 +255,9 @@ int main() {
     nodeD->leftchild = nodeE;
     nodeE->parent = nodeD;
     TreeNode *nodeX = T.DeleteBST(10);
-    cout << "out" << endl;
-    T.Inorder(nodeX);
-    
+    int depth = 0;
+    T.Inorder(nodeX, depth);
+    cout << "depth: " << T.maxDepth << " nodecount: " << T.numCount << endl;
     /*
     BinaryTree T(nodeA);
     //T.Inorder(nodeC);
