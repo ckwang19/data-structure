@@ -119,6 +119,23 @@ public:
         return nullptr;  // No cycle.
     }
 
+    ListNode *detectCycle2(ListNode *head) {
+        ListNode *slow = head, *fast = head;
+
+        while(slow){
+            slow = slow->next;
+            fast = fast->next->next;
+            if(slow == fast) break;
+        }
+        fast = head;
+        while(fast){
+            slow = slow->next;
+            fast = fast->next;
+            if(slow == fast) return slow;
+        }
+        return nullptr;  // No cycle.
+    }
+
 	// Time:  O(n)
 	// Space: O(1)
     bool hasCycle(ListNode *head) {
@@ -132,6 +149,22 @@ public:
         }
         return false;  // No cycle.
     }
+
+    void insertElementWithSorted(ListNode *head, int value) {
+        ListNode* NewListNode = new ListNode(value);
+        ListNode* current = head;
+        ListNode* pred = nullptr;
+        while (current) {
+            if(current->value > value){
+                pred->next = NewListNode;
+                NewListNode->next = current;
+                break;
+            }
+            pred = current;
+            current = current->next;
+        }
+    }
+
 
     // if we want to re-direction Nth "->"
     // step0: setting pre、cur、pas
@@ -241,12 +274,95 @@ public:
     	if (past != nullptr) head->next = reverseKNode(past, k);
     	return pre;
     }
+    ListNode* removeKNode(ListNode* head, int k){
+        ListNode* current = head;
+
+        if(k == 1){
+            head = head->next;
+            return head;
+        }
+        int count = 1;
+        ListNode* previous = current;
+        current = current->next;
+        while(current){
+            count++;
+            if(count == k){
+                previous->next = current->next;
+                current = current->next;
+            }else{
+                previous = current;
+                current = current->next;
+            }
+        }
+        return head;
+    }
+    // 7    6   5   4   3   2   1
+    // slow         fast
+    //              slow        fast
+    ListNode* removeLastKNode(ListNode* head, int k){
+        int count = 0;
+        ListNode* slow = head;
+        ListNode* fast = head;
+        while(count < k){
+            fast = fast->next;
+            count++;
+        }
+        if(fast){
+            while(fast->next){
+                fast = fast->next;
+                slow = slow->next;
+            }
+            slow->next = slow->next->next;
+        }else{ // if kth node before first node
+            head = head->next;
+        }
+        return head;
+    }
+
+    ListNode* mergeSort(ListNode* head){
+        if(head == nullptr || head->next == nullptr) return head;
+        ListNode* slow = head;
+        ListNode* fast = head;
+        ListNode* previous = head;
+        while(fast != nullptr && fast->next != nullptr){
+            previous = slow;
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        previous->next = nullptr;
+        // 每次都把LList分一半
+        return mergeLLists(mergeSort(head),mergeSort(slow));
+    }
+
+    ListNode* mergeLLists(ListNode* head, ListNode* head2){
+        // 有兩個LList進來，每次return value小的那個node，並把
+        // 這個小的node的next指向下一個小的node....依序
+        if(head==nullptr) return head2;
+        if(head2==nullptr) return head;
+        if(head->value < head2->value){
+            head->next = mergeLLists(head->next, head2);
+            return head;
+        }
+        if(head->value > head2->value){
+            head2->next = mergeLLists(head, head2->next);
+            return head2;
+        }
+    }
 };
 
+
+
 int main(){
-	vector<int> TestVec{1,2,3,4,5};
+	vector<int> TestVec{10,6,1,2,9,4,5};
 	LinkedList L;
 	ListNode* HeadLinkedList = L.vecToLinkedList(TestVec);
+
+    //vector<int> TestVec2{11,26,13,4,3,7,51};
+    //LinkedList L2;
+    //ListNode* HeadLinkedList2 = L.vecToLinkedList(TestVec2);
+
+    HeadLinkedList = L.mergeSort(HeadLinkedList);
+    //HeadLinkedList = L.removeLastKNode(HeadLinkedList, 5);
 	//L.addNode(13, HeadLinkedList);
 	//cout << "original: ";
 	//L.printLinkedList(HeadLinkedList);
@@ -256,18 +372,22 @@ int main(){
 	//HeadLinkedList = L.reverse(HeadLinkedList);
 	//cout << "reverse: ";
 	//L.printLinkedList(HeadLinkedList);
+    //L.printLinkedList(HeadLinkedList);
+    //L.insertElementWithSorted(HeadLinkedList, 3);
+    //L.printLinkedList(HeadLinkedList);
 
-	HeadLinkedList = L.reverseKNode(HeadLinkedList, 3);
+	//HeadLinkedList = L.reverseKNode(HeadLinkedList, 3);
 	L.printLinkedList(HeadLinkedList);
 
 	cout << "hasCycle(before makeCircle): " << L.hasCycle(HeadLinkedList) << endl;
 	if(L.hasCycle(HeadLinkedList)){
 		cout << "detectCycle: " << L.detectCycle(HeadLinkedList)->value << endl;
 	}
-	L.makeCircleLinkedList(HeadLinkedList, 4);
+	L.makeCircleLinkedList(HeadLinkedList, 2);
 	cout << "hasCycle(after makeCircle): " << L.hasCycle(HeadLinkedList) << endl;
 	if(L.hasCycle(HeadLinkedList)){
 		cout << "detectCycle: " << L.detectCycle(HeadLinkedList)->value << endl;
+        cout << "detectCycle2: " << L.detectCycle2(HeadLinkedList)->value << endl;
 	}
 	return 0;
 }
