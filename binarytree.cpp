@@ -2,6 +2,7 @@
 #include <string>
 #include <queue>
 #include <vector>
+#include <climits>
 
 using namespace std;
 
@@ -236,8 +237,125 @@ TreeNode* BinaryTree::DeleteBST(int key){
     }
 }
 
+
+
+void PathSumII(TreeNode* t, int current, int sum, vector<vector<int>> &ans, vector<int> &path){
+    if (t == NULL || current + t -> data > sum) return;
+    //確保加進ans的path一定都經過尾巴
+    //if (t -> leftchild == NULL && t -> rightchild == NULL) {
+        if (current + t -> data == sum) {
+            cout << "1: " << t->data << endl;
+            path.push_back(t -> data);
+            ans.push_back(path);
+            path.pop_back();
+            return;
+        }
+    //}
+    path.push_back(t -> data);
+    PathSumII(t -> leftchild, current + t -> data, sum, ans, path);
+    PathSumII(t -> rightchild, current + t -> data, sum, ans, path);
+    path.pop_back();
+    vector<int> path2;
+    path2.clear();
+    //讓中間的path也都能成為ans
+    //PathSumII(t -> leftchild, 0, sum, ans, path2);
+    //PathSumII(t -> rightchild, 0, sum, ans, path2);
+};
+
+void print2(vector<vector<int> > &ans){
+    cout << endl;
+    for (int i = 0; i < ans.size(); i++){
+        for (int j = 0; j < ans[i].size(); j++){
+            cout << ans[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+void LevelOrder(TreeNode* root){
+    queue<TreeNode*> q;
+    TreeNode *current = nullptr;
+    q.push(root);
+    while(!q.empty()){
+        current = q.front();
+        cout << current->data << endl;
+        q.pop();
+        if(current->leftchild){
+            q.push(current->leftchild);
+        }
+        if(current->rightchild){
+            q.push(current->rightchild);
+        }
+    }
+}
+
+void BinarySearchTreeInsert(TreeNode* root, int value){
+    TreeNode *current = root;
+    TreeNode *pre = nullptr;
+    while(current){
+        pre = current;
+        if(current->data > value){
+            current = current->leftchild;
+        }else{
+            current = current->rightchild;
+        }
+    }
+    TreeNode *insertNode = new TreeNode(value);
+    if(pre->data > value){
+        pre->leftchild = insertNode;
+    }else{
+        pre->rightchild = insertNode;
+    }
+    insertNode->parent = pre;
+}
+
+bool ValidateBinarySearchTree(TreeNode* root, long max, long min){
+    if(!root) return true;
+    else if(root->data > max || root->data < min) return false;
+    else if(root->leftchild || root->rightchild){
+        if(root->leftchild){
+            if(root->data < root->leftchild->data) return false;
+        }
+        if(root->rightchild){
+            if(root->data > root->rightchild->data) return false;
+        }
+    }
+    return ValidateBinarySearchTree(root->leftchild, root->data, min) && 
+        ValidateBinarySearchTree(root->rightchild, max, root->data);
+}
+
+bool ValidBSTreeMain(TreeNode* root, long max, long min){
+    if(root) return ValidateBinarySearchTree(root, max, min);
+    else return false;
+}
+
 int main() {
 
+    TreeNode *nodeA = new TreeNode(10);
+    TreeNode *nodeB = new TreeNode(7);
+    TreeNode *nodeC = new TreeNode(9);
+    TreeNode *nodeD = new TreeNode(16);
+    TreeNode *nodeE = new TreeNode(26);
+
+    BinaryTree T(nodeA);
+    nodeA->leftchild = nodeB;
+    nodeB->rightchild = nodeC;
+    nodeA->rightchild = nodeD;
+    nodeD->rightchild = nodeE;
+    vector<vector<int>> res;
+    vector<int> temp;
+    res.clear();
+    temp.clear();
+    //PathSumII(nodeA, 0, 26, res, temp);
+    //print2(res);
+
+    
+    //BinarySearchTreeInsert(nodeA, 1);
+    //LevelOrder(nodeA);
+    
+    cout << ValidBSTreeMain(nodeA, LONG_MAX, LONG_MIN) << endl;
+
+    /*
     TreeNode *nodeA = new TreeNode(4);
     TreeNode *nodeB = new TreeNode(6);
     TreeNode *nodeC = new TreeNode(8);
@@ -258,6 +376,7 @@ int main() {
     int depth = 0;
     T.Inorder(nodeX, depth);
     cout << "depth: " << T.maxDepth << " nodecount: " << T.numCount << endl;
+    */
     /*
     BinaryTree T(nodeA);
     //T.Inorder(nodeC);
