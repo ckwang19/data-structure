@@ -3,6 +3,23 @@
 
 using namespace std;
 
+//void PermuteMain
+
+void Permute(vector<int> nums, vector<int>& tmp, vector<vector<int>>& res){
+	if(nums.size() == tmp.size()){
+		res.push_back(tmp);
+		return;
+	}
+	for (auto num:nums){
+		if(find(tmp.begin(), tmp.end(), num) != tmp.end()) continue;
+		tmp.push_back(num);
+		Permute(nums, tmp, res);
+		tmp.pop_back();
+	}
+
+
+}
+
 // 1 3 2 6 5 2 2 2
 int majorityNum(vector<int> input){
 	int count = 1;
@@ -83,7 +100,24 @@ void printVec(vector<int> input){
 	cout << endl;
 }
 
+void printVec2d(vector<vector<int>> input){
+	for(auto nums:input){
+		for(auto num:nums){
+			cout << num << " ";
+		}
+		cout << endl;
+	}
+}
+
 int main(){
+	// 20190620
+	vector<int> nums{1,2,3};
+	vector<vector<int>> res;
+	vector<int> tmp;
+	Permute(nums, tmp, res);
+	printVec2d(res);
+
+
 	vector<int> input{4,0,1,0,5,0,0};
 	vector<int> result;
 	//cout << majorityNum(input) << endl;
