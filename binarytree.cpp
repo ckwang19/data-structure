@@ -255,9 +255,9 @@ void PathSumII(TreeNode* t, int current, int sum, vector<vector<int>> &ans, vect
     PathSumII(t -> leftchild, current + t -> data, sum, ans, path);
     PathSumII(t -> rightchild, current + t -> data, sum, ans, path);
     path.pop_back();
-    vector<int> path2;
-    path2.clear();
     //讓中間的path也都能成為ans
+    //vector<int> path2;
+    //path2.clear();
     //PathSumII(t -> leftchild, 0, sum, ans, path2);
     //PathSumII(t -> rightchild, 0, sum, ans, path2);
 };
@@ -329,8 +329,25 @@ bool ValidBSTreeMain(TreeNode* root, long max, long min){
     else return false;
 }
 
+/*
+bool PathSum0620(TreeNode* root, vector<vector<int>> &res, vector<int> path, 
+    int target, int sum){
+    if(!root) return false;
+    if(sum > target) return false;
+    if(sum == target){
+        res.push_back(path);
+        return true;
+    }
+    if(root->leftchild || root->rightchild){
+        path.push_back(root->data);
+        if(PathSum0620(root->leftchild, res, path, target, sum+root->data)) return true;
+        if(PathSum0620(root->rightchild, res, path, target, sum+root->data)) return true;
+        //path.pop_back();
+    }
+    return false;
+}
+*/
 int main() {
-
     TreeNode *nodeA = new TreeNode(10);
     TreeNode *nodeB = new TreeNode(7);
     TreeNode *nodeC = new TreeNode(9);
@@ -346,6 +363,10 @@ int main() {
     vector<int> temp;
     res.clear();
     temp.clear();
+
+    //20190620
+    //cout << PathSum0620(nodeA, res, temp, 26, 0) << endl;
+
     //PathSumII(nodeA, 0, 26, res, temp);
     //print2(res);
 
@@ -353,7 +374,7 @@ int main() {
     //BinarySearchTreeInsert(nodeA, 1);
     //LevelOrder(nodeA);
     
-    cout << ValidBSTreeMain(nodeA, LONG_MAX, LONG_MIN) << endl;
+    //cout << ValidBSTreeMain(nodeA, LONG_MAX, LONG_MIN) << endl;
 
     /*
     TreeNode *nodeA = new TreeNode(4);
