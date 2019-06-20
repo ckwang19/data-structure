@@ -350,9 +350,37 @@ public:
     }
 };
 
-
+ListNode* InterSectionOfTwoLinkedLists(ListNode* headA, ListNode* headB){
+    ListNode* currentA = headA;
+    ListNode* currentB = headB;
+    ListNode* tailA = nullptr;
+    ListNode* tailB = nullptr;
+    while(currentA && currentB){
+        if(currentA == currentB) return currentA;
+        if(currentA->next){
+            currentA = currentA->next;
+        }else if(!tailA){
+            tailA = currentA;
+            currentA = headB;
+        }else{
+            break;
+        }
+        if(currentB->next){
+            currentB = currentB->next;
+        }else if(!tailB){
+            tailB = currentB;
+            currentB = headA;
+        }else{
+            break;
+        }
+    }
+    return nullptr;
+}
 
 int main(){
+    // 20190620
+    
+    
 	vector<int> TestVec{10,6,1,2,9,4,5};
 	LinkedList L;
 	ListNode* HeadLinkedList = L.vecToLinkedList(TestVec);
