@@ -3,23 +3,6 @@
 
 using namespace std;
 
-//void PermuteMain
-
-void Permute(vector<int> nums, vector<int>& tmp, vector<vector<int>>& res){
-	if(nums.size() == tmp.size()){
-		res.push_back(tmp);
-		return;
-	}
-	for (auto num:nums){
-		if(find(tmp.begin(), tmp.end(), num) != tmp.end()) continue;
-		tmp.push_back(num);
-		Permute(nums, tmp, res);
-		tmp.pop_back();
-	}
-
-
-}
-
 // 1 3 2 6 5 2 2 2
 int majorityNum(vector<int> input){
 	int count = 1;
@@ -109,12 +92,59 @@ void printVec2d(vector<vector<int>> input){
 	}
 }
 
+void Permute(vector<int> nums, vector<int>& tmp, 
+	vector<vector<int>>& res){
+	// add result
+	if(nums.size() == tmp.size()){
+		res.push_back(tmp);
+		return;
+	}
+	// add tmp
+	for (auto num:nums){
+		if(find(tmp.begin(), tmp.end(), num) != tmp.end()) continue;
+		tmp.push_back(num);
+		Permute(nums, tmp, res);
+		tmp.pop_back();
+	}
+}
+
+void CombinationSubset(vector<int> nums, vector<int>& tmp, 
+	vector<vector<int>>& res, int begin){
+	// add result
+	res.push_back(tmp);
+	// add tmp
+	for(int i = begin; i < nums.size(); i++){
+		tmp.push_back(nums[i]);
+		CombinationSubset(nums, tmp, res, i+1);
+		tmp.pop_back();
+	}
+}
+
+void CombinationSum(int target, vector<int> nums, vector<int>& tmp, 
+	vector<vector<int>>& res, int begin){
+	// add result
+	if(target == 0){
+		res.push_back(tmp);
+		return;
+	}
+	// add tmp
+	if(target < 0) return;
+	for(int i = begin; i < nums.size(); i++){
+		tmp.push_back(nums[i]);
+		CombinationSum(target-nums[i], nums, tmp, res, i);
+		tmp.pop_back();
+	}
+}
+
 int main(){
 	// 20190620
 	vector<int> nums{1,2,3};
 	vector<vector<int>> res;
 	vector<int> tmp;
-	Permute(nums, tmp, res);
+	int target = 3;
+	//Permute(nums, tmp, res);
+	CombinationSum(target, nums, tmp, res, 0);
+	//CombinationSubset(nums, tmp, res, 0);
 	printVec2d(res);
 
 
